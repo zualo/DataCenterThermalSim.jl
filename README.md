@@ -8,16 +8,10 @@ High-density compute loads change faster than fixed cooling schedules can useful
 
 ## System schematic
 
-```text
-                  R_th
- P_it(t) ──► [ Silicon die, C_die ] ───────► [ Coolant pass, C_fluid ]
-                         ▲                            │       │
-                         │                            │       └── m_dot Cp (T_fluid - T_inlet)
-                PID ◄── T_die                           │
-                  │                                     ▼
-                  └──── m_dot ─────────────────── Pump / inlet coolant
-                                                   T_inlet
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/system_schematic.dark.svg">
+  <img alt="Liquid-cooled rack thermal path from IT load through the die and cold plate, with coolant pump flow controlled by a PID loop using die temperature feedback" src="docs/system_schematic.light.svg">
+</picture>
 
 The die-to-fluid heat-transfer term is `(T_die - T_fluid) / R_th`. The controller raises flow when die temperature rises above its setpoint and limits the command to the specified pump envelope.
 

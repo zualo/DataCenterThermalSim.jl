@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
+  <title id="title">Liquid-cooled rack thermal and control schematic</title>
+  <desc id="desc">Compute power heats the silicon die. Heat passes through thermal resistance into the cold-plate coolant pass. A PID controller senses die temperature and commands pump flow. Pumped inlet coolant removes heat and exits as a warm return.</desc>
+  <defs>
+    <marker id="arrow-heat" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#ff7b72"/></marker>
+    <marker id="arrow-flow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#58a6ff"/></marker>
+    <marker id="arrow-feedback" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#ff7b72"/></marker>
+    <marker id="arrow-command" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#3fb950"/></marker>
+  </defs>
+  <rect width="1280" height="640" rx="18" fill="#0d1117"/>
+
+  <g font-family="Arial, Helvetica, sans-serif" fill="#f0f6fc">
+    <rect x="38" y="132" width="170" height="140" rx="16" fill="#2d1b12" stroke="#ff7b72" stroke-width="3"/>
+    <text x="123" y="172" text-anchor="middle" font-size="18" font-weight="700" fill="#ffb4a9">COMPUTE LOAD</text>
+    <text x="123" y="220" text-anchor="middle" font-size="30" font-weight="600">P_IT(t)</text>
+    <text x="123" y="250" text-anchor="middle" font-size="16" fill="#8b949e">5–30 kW</text>
+
+    <path d="M208 202H244" fill="none" stroke="#ff7b72" stroke-width="4" marker-end="url(#arrow-heat)"/>
+    <rect x="252" y="105" width="250" height="194" rx="18" fill="#161b22" stroke="#8b949e" stroke-width="3"/>
+    <text x="377" y="139" text-anchor="middle" font-size="16" font-weight="700" fill="#8b949e">THERMAL NODE 1</text>
+    <rect x="347" y="155" width="60" height="52" rx="7" fill="#102a43" stroke="#58a6ff" stroke-width="2"/>
+    <path d="M358 166h38v30h-38zM366 159v-8M388 159v-8M366 215v-8M388 215v-8" fill="none" stroke="#58a6ff" stroke-width="2"/>
+    <text x="377" y="241" text-anchor="middle" font-size="22" font-weight="700">Silicon die</text>
+    <text x="377" y="273" text-anchor="middle" font-size="18">C_die · T_die</text>
+
+    <text x="626" y="137" text-anchor="middle" font-size="20" font-weight="700">R_th</text>
+    <path d="M502 202H540l12-19 22 38 22-38 22 38 22-38 22 38 13-19h99" fill="none" stroke="#ff7b72" stroke-width="4" marker-end="url(#arrow-heat)"/>
+    <text x="626" y="257" text-anchor="middle" font-size="16" fill="#ffb4a9">q_die→fluid</text>
+    <text x="626" y="280" text-anchor="middle" font-size="15" fill="#8b949e">(T_die − T_fluid) / R_th</text>
+
+    <rect x="752" y="105" width="270" height="194" rx="18" fill="#102a2a" stroke="#39c5cf" stroke-width="3"/>
+    <text x="887" y="139" text-anchor="middle" font-size="16" font-weight="700" fill="#39c5cf">THERMAL NODE 2</text>
+    <path d="M812 170h150v38H812zM825 180h124M825 190h124M825 200h124" fill="none" stroke="#39c5cf" stroke-width="2"/>
+    <text x="887" y="241" text-anchor="middle" font-size="20" font-weight="700">Cold-plate coolant pass</text>
+    <text x="887" y="273" text-anchor="middle" font-size="18">C_fluid · T_fluid</text>
+    <path d="M1022 202H1195" fill="none" stroke="#58a6ff" stroke-width="4" marker-end="url(#arrow-flow)"/>
+    <text x="1100" y="181" text-anchor="middle" font-size="17" font-weight="700" fill="#39c5cf">Warm return</text>
+    <text x="1100" y="231" text-anchor="middle" font-size="16" fill="#8b949e">T_fluid, out</text>
+
+    <text x="45" y="367" font-size="18" font-weight="700" fill="#58a6ff">Coolant inlet</text>
+    <text x="45" y="393" font-size="17" fill="#8b949e">T_inlet</text>
+    <path d="M135 378H171" fill="none" stroke="#58a6ff" stroke-width="4" marker-end="url(#arrow-flow)"/>
+    <circle cx="211" cy="378" r="43" fill="#102a43" stroke="#58a6ff" stroke-width="3"/>
+    <path d="M194 378c10-18 23-18 34 0-11 18-24 18-34 0zm17-27v54m-27-27h54" fill="none" stroke="#58a6ff" stroke-width="3"/>
+    <text x="211" y="443" text-anchor="middle" font-size="17" font-weight="700">Pump</text>
+    <text x="211" y="468" text-anchor="middle" font-size="16" fill="#8b949e">P_pump ∝ ṁ³</text>
+    <path d="M254 378H865V292" fill="none" stroke="#58a6ff" stroke-width="4" marker-end="url(#arrow-flow)"/>
+    <text x="525" y="360" text-anchor="middle" font-size="18" font-weight="700" fill="#58a6ff">ṁ · C_p · (T_fluid − T_inlet)</text>
+    <text x="525" y="390" text-anchor="middle" font-size="15" fill="#8b949e">Coolant heat removal</text>
+
+    <path d="M377 299V320H622V450" fill="none" stroke="#ff7b72" stroke-width="3" stroke-dasharray="9 7" marker-end="url(#arrow-feedback)"/>
+    <text x="500" y="311" text-anchor="middle" font-size="15" font-weight="700" fill="#ff7b72">T_die feedback</text>
+    <rect x="430" y="452" width="386" height="132" rx="16" fill="#161b22" stroke="#bc8cff" stroke-width="3"/>
+    <text x="623" y="489" text-anchor="middle" font-size="17" font-weight="700" fill="#d2a8ff">FEEDBACK CONTROLLER</text>
+    <text x="623" y="526" text-anchor="middle" font-size="24" font-weight="700">PID · T_set = 70 °C</text>
+    <text x="623" y="558" text-anchor="middle" font-size="16" fill="#8b949e">Flow command clamped to pump limits</text>
+    <path d="M430 520H211V418" fill="none" stroke="#3fb950" stroke-width="3" stroke-dasharray="9 7" marker-end="url(#arrow-command)"/>
+    <text x="323" y="508" text-anchor="middle" font-size="15" font-weight="700" fill="#3fb950">ṁ command</text>
+  </g>
+</svg>

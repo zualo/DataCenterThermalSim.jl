@@ -49,6 +49,8 @@ try {
 \definecolor{equationcolor}{HTML}{$($theme.Color)}
 \begin{document}
 \color{equationcolor}
+\Large
+\setlength{\jot}{9pt}
 \[
 $($entry.Value)
 \]
