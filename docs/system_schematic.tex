@@ -1,7 +1,7 @@
 \documentclass{article}
 \usepackage[T1]{fontenc}
 \usepackage{amsmath,amssymb,xcolor,tikz}
-\usetikzlibrary{arrows.meta,positioning,shapes.misc}
+\usetikzlibrary{arrows.meta,chains,positioning,shapes.misc}
 \pagestyle{empty}
 
 \definecolor{Canvas}{HTML}{SCHEME_BG}
@@ -27,76 +27,86 @@
   line cap=round,line join=round,
   component/.style={rounded corners=3mm,draw=NodeBorder,fill=NodeFill,
     line width=1.1pt,minimum height=2.0cm,align=center,inner sep=5pt},
-  arrow/.style={-{Stealth[length=2.2mm,width=1.7mm]},line width=1.1pt,shorten >=3pt},
-  feedback/.style={-{Stealth[length=2.0mm,width=1.6mm]},line width=1pt,
+  heat arrow/.style={-{Stealth[length=2.0mm]},draw=Heat,line width=1.0pt,
+    shorten >=3pt},
+  flow arrow/.style={-{Stealth[length=2.0mm]},draw=Flow,line width=1.0pt,
+    shorten >=3pt},
+  feedback arrow/.style={-{Stealth[length=1.8mm]},draw=Feedback,line width=0.9pt,
     dashed,shorten >=3pt},
-  command/.style={-{Stealth[length=2.0mm,width=1.6mm]},line width=1pt,
+  command arrow/.style={-{Stealth[length=1.8mm]},draw=Command,line width=0.9pt,
     dashed,shorten >=3pt}
 ]
-  \path[use as bounding box] (-0.5,-5.0) rectangle (17.0,3.5);
-  \fill[Canvas,rounded corners=4mm] (-0.5,-5.0) rectangle (17.0,3.5);
+  \path[use as bounding box] (-2.3,-5.0) rectangle (16.0,3.6);
+  \fill[Canvas,rounded corners=4mm] (-2.3,-5.0) rectangle (16.0,3.6);
 
-  \node[component,fill=LoadFill,draw=Heat,text width=2.15cm] (load) at (1.5,0) {
-    {\small\bfseries\color{Heat} COMPUTE LOAD}\\[5pt]
-    {\Large $P_{\mathrm{IT}}(t)$}\\[4pt]
-    {\small\color{Muted} 5--30 kW}
-  };
+  % A TikZ chain lays out the physical thermal path and joins adjacent node
+  % anchors automatically, so line endpoints track each box if its text changes.
+  \begin{scope}[shift={(0.7,0)},start chain=thermal going right,
+    node distance=6mm,every join/.style={heat arrow}]
+    \node[component,fill=LoadFill,draw=Heat,text width=2.0cm,
+      on chain=thermal] (load) {
+      {\small\bfseries\color{Heat} COMPUTE LOAD}\\[5pt]
+      {\Large $P_{\mathrm{IT}}(t)$}\\[4pt]
+      {\small\color{Muted} 5--30 kW}
+    };
+    \node[component,text width=2.55cm,on chain=thermal,join] (die) {
+      {\small\bfseries\color{Muted} THERMAL NODE 1}\\[5pt]
+      {\large\bfseries Silicon die}\\[5pt]
+      {$C_{\mathrm{die}}\;\cdot\;T_{\mathrm{die}}$}
+    };
+    \node[component,fill=LoadFill,draw=Heat,text width=2.55cm,
+      on chain=thermal,join] (resistance) {
+      {\small\bfseries\color{Heat} THERMAL LINK}\\[4pt]
+      {\Large $R_{\mathrm{th}}$}\\[4pt]
+      {\scriptsize $\dot Q=\dfrac{T_{\mathrm{die}}-T_{\mathrm{fluid}}}{R_{\mathrm{th}}}$}
+    };
+    \node[component,fill=CoolantFill,draw=Coolant,text width=3.0cm,
+      on chain=thermal,join] (fluid) {
+      {\small\bfseries\color{Coolant} THERMAL NODE 2}\\[5pt]
+      {\large\bfseries Cold-plate coolant pass}\\[5pt]
+      {$C_{\mathrm{fluid}}\;\cdot\;T_{\mathrm{fluid}}$}
+    };
+    \node[align=left,text width=2.0cm,on chain=thermal,
+      join=by flow arrow] (return) {
+      {\small\bfseries\color{Coolant} Warm return}\\[3pt]
+      {$T_{\mathrm{fluid,out}}$}
+    };
+  \end{scope}
 
-  \node[component,text width=2.65cm] (die) at (5.0,0) {
-    {\small\bfseries\color{Muted} THERMAL NODE 1}\\[5pt]
-    {\large\bfseries Silicon die}\\[5pt]
-    {$C_{\mathrm{die}}\;\cdot\;T_{\mathrm{die}}$}
-  };
-
-  \node[component,fill=LoadFill,draw=Heat,text width=2.65cm] (resistance) at (8.4,0) {
-    {\small\bfseries\color{Heat} THERMAL LINK}\\[4pt]
-    {\Large $R_{\mathrm{th}}$}\\[4pt]
-    {\scriptsize $\dot Q=\dfrac{T_{\mathrm{die}}-T_{\mathrm{fluid}}}{R_{\mathrm{th}}}$}
-  };
-
-  \node[component,fill=CoolantFill,draw=Coolant,text width=3.2cm] (fluid) at (12.2,0) {
-    {\small\bfseries\color{Coolant} THERMAL NODE 2}\\[5pt]
-    {\large\bfseries Cold-plate coolant pass}\\[5pt]
-    {$C_{\mathrm{fluid}}\;\cdot\;T_{\mathrm{fluid}}$}
-  };
-
-  \node[align=left,text width=2.1cm] (return) at (15.55,0) {
-    {\small\bfseries\color{Coolant} Warm return}\\[3pt]
-    {$T_{\mathrm{fluid,out}}$}
-  };
-
-  \draw[arrow,color=Heat] (load.east) -- (die.west);
-  \draw[arrow,color=Heat] (die.east) -- (resistance.west);
-  \draw[arrow,color=Heat] (resistance.east) -- (fluid.west);
-  \draw[arrow,color=Flow] (fluid.east) -- (return.west);
-
-  \node[component,fill=ControlFill,draw=Control,text width=4.55cm,
-    minimum height=1.35cm] (controller) at (5.0,2.55) {
+  \node[component,fill=ControlFill,draw=Control,text width=4.25cm,
+    minimum height=1.35cm] (controller) at (4.9,2.45) {
     {\small\bfseries\color{Control} FEEDBACK CONTROLLER}\\[4pt]
     {\large\bfseries PID $\;\cdot\;$ $T_{\mathrm{set}}=70\,^{\circ}\mathrm{C}$}\\[3pt]
     {\small\color{Muted} Flow command limited to pump constraints}
   };
 
-  \draw[feedback,color=Feedback] (die.north) -- (controller.south);
-  \node[font=\scriptsize,text=Feedback,anchor=west] at (5.28,1.3) {$T_{\mathrm{die}}$ feedback};
+  \draw[feedback arrow] (die.north) -- (controller.south);
 
-  \node[font=\small,text=Flow,align=center] at (1.3,-1.95) {
-    Coolant inlet\\[-1pt] $T_{\mathrm{inlet}}$
-  };
-  \node[circle,draw=Flow,fill=CoolantFill,line width=1.1pt,minimum size=1.1cm,
-    inner sep=0pt] (pump) at (3.0,-2.8) {$\circlearrowright$};
-  \node[font=\small\bfseries,text=Ink,anchor=west] at (3.72,-2.0) {Pump};
-  \node[font=\small,text=Muted,anchor=west] at (4.15,-3.55) {
+  % Inlet and pump are another short chain; the pump label is inside the node,
+  % keeping both the inlet and flow arrows clear of annotation text.
+  \begin{scope}[shift={(1.0,-2.85)},start chain=supply going right,
+    node distance=7mm,every join/.style={flow arrow}]
+    \node[align=center,text=Flow,font=\small,text width=1.75cm,
+      on chain=supply] (inlet) {Coolant inlet\\[-1pt] $T_{\mathrm{inlet}}$};
+    \node[circle,draw=Flow,fill=CoolantFill,line width=1.1pt,
+      minimum size=1.25cm,inner sep=1pt,font=\scriptsize\bfseries,
+      on chain=supply,join] (pump) {PUMP};
+  \end{scope}
+  \node[font=\small,text=Muted,anchor=north] at (pump.south west) [yshift=-5pt] {
     $P_{\mathrm{pump}}\propto\dot m^{\,3}$
   };
 
-  \draw[command,color=Command] (controller.west) -- (-0.1,2.55) -- (-0.1,-3.9)
-    -- node[midway,below,font=\scriptsize,text=Command,fill=Canvas,inner sep=2pt] {$\dot m$ command}
-    (3.0,-3.9) -- (pump.south);
-  \draw[arrow,color=Flow] (0.35,-2.8) -- (pump.west);
-  \draw[arrow,color=Flow] (pump.east) -- (12.2,-2.8) -- (fluid.south);
-  \node[font=\small,text=Flow,fill=Canvas,inner sep=2pt,align=center] at (8.2,-2.28) {
-    $\dot m\,C_p\,(T_{\mathrm{fluid}}-T_{\mathrm{inlet}})$
-  };
+  % Curved edges connect component anchors; TikZ computes their endpoints
+  % from the node shapes rather than relying on hand-positioned arrow tips.
+  % The command route travels outside the load node, then approaches the pump
+  % from above; its endpoint still follows the pump's north anchor.
+  \coordinate (command elbow) at ([xshift=-12mm]load.west |- pump.north);
+  \draw[command arrow,rounded corners=3pt]
+    (controller.west) -| (command elbow) -| (pump.north);
+  \node[font=\scriptsize,text=Command,fill=Canvas,inner sep=1pt]
+    at (1.0,2.62) {$\dot m$ command};
+  \draw[flow arrow] (pump.east) to[out=0,in=-90]
+    node[pos=0.55,below=1pt,font=\small,text=Flow,fill=Canvas,inner sep=2pt]
+      {$\dot m\,C_p\,(T_{\mathrm{fluid}}-T_{\mathrm{inlet}})$} (fluid.south);
 \end{tikzpicture}
 \end{document}

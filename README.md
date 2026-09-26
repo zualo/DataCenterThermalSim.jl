@@ -40,7 +40,7 @@ The derivative term acts on measured die temperature, avoiding derivative kick w
 
 This is a system-level scaling model, not a pump curve or a measured facility power model.
 
-The equation artwork and system schematic are generated with LaTeX, TikZ, and `dvisvgm`. Regeneration requires a LaTeX installation with TikZ and `dvisvgm` on `PATH`. The schematic source is `docs/system_schematic.tex`. To regenerate the equation and schematic SVGs, run `powershell -ExecutionPolicy Bypass -File scripts/render_equations.ps1` from the project root. GitHub's `<picture>` support selects the matching SVG for the reader's light or dark color scheme.
+The equation artwork and system schematic are generated with LaTeX, TikZ, and `dvisvgm`. The schematic uses TikZ chains to place the main thermal path and create joins between adjacent nodes. Other links attach to named node anchors, so arrow endpoints follow the component boundaries when labels or dimensions change. Regeneration requires a LaTeX installation with TikZ and `dvisvgm` on `PATH`. The schematic source is `docs/system_schematic.tex`. To regenerate the equation and schematic SVGs, run `powershell -ExecutionPolicy Bypass -File scripts/render_equations.ps1` from the project root. GitHub's `<picture>` support selects the matching SVG for the reader's light or dark color scheme.
 
 ## Numerical implementation
 
