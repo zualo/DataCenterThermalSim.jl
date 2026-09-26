@@ -40,7 +40,7 @@ The derivative term acts on measured die temperature, avoiding derivative kick w
 
 This is a system-level scaling model, not a pump curve or a measured facility power model.
 
-The equation artwork is generated from LaTeX with `latex` and `dvisvgm`. To regenerate both color variants after editing the source equations, run `powershell -ExecutionPolicy Bypass -File scripts/render_equations.ps1` from the project root. GitHub's `<picture>` support selects the matching SVG for the reader's light or dark color scheme.
+The equation artwork and system schematic are generated with LaTeX, TikZ, and `dvisvgm`. Regeneration requires a LaTeX installation with TikZ and `dvisvgm` on `PATH`. The schematic source is `docs/system_schematic.tex`. To regenerate the equation and schematic SVGs, run `powershell -ExecutionPolicy Bypass -File scripts/render_equations.ps1` from the project root. GitHub's `<picture>` support selects the matching SVG for the reader's light or dark color scheme.
 
 ## Numerical implementation
 
