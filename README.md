@@ -25,31 +25,28 @@ The die-to-fluid heat-transfer term is `(T_die - T_fluid) / R_th`. The controlle
 
 The two thermal capacitance states follow the lumped energy balances:
 
-\[
-C_{\mathrm{die}}\frac{dT_{\mathrm{die}}}{dt}
-= P_{\mathrm{IT}}(t) - \frac{T_{\mathrm{die}}-T_{\mathrm{fluid}}}{R_{\mathrm{th}}},
-\]
-
-\[
-C_{\mathrm{fluid}}\frac{dT_{\mathrm{fluid}}}{dt}
-= \frac{T_{\mathrm{die}}-T_{\mathrm{fluid}}}{R_{\mathrm{th}}}
-- \dot m(t) C_p (T_{\mathrm{fluid}}-T_{\mathrm{inlet}}).
-\]
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/equations/thermal_balance.dark.svg">
+  <img alt="Die and coolant-pass transient energy balance equations" src="docs/equations/thermal_balance.light.svg">
+</picture>
 
 The requested flow is a PID command around a nominal flow, with saturation:
 
-\[
-e(t)=T_{\mathrm{die}}(t)-T_{\mathrm{set}},\qquad
-\dot m(t)=\operatorname{clamp}\!\left(\dot m_{\mathrm{nom}}+K_p e+K_i\int_0^t e(\tau)d\tau+K_d\frac{dT_{\mathrm{die}}}{dt},\dot m_{\min},\dot m_{\max}\right).
-\]
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/equations/pid_control.dark.svg">
+  <img alt="Temperature error and saturated PID command for coolant mass flow" src="docs/equations/pid_control.light.svg">
+</picture>
 
 The derivative term acts on measured die temperature, avoiding derivative kick when a setpoint changes. Integral accumulation is conditionally disabled when the actuator is saturated in the same direction as the error. Pump power uses a normalized cubic affinity-law approximation:
 
-\[
-P_{\mathrm{pump}}=P_{\mathrm{pump,max}}\left(\frac{\dot m}{\dot m_{\max}}\right)^3.
-\]
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/equations/pump_power.dark.svg">
+  <img alt="Cubic hydraulic scaling for pump power" src="docs/equations/pump_power.light.svg">
+</picture>
 
 This is a system-level scaling model, not a pump curve or a measured facility power model.
+
+The equation artwork is generated from LaTeX with `latex` and `dvisvgm`. To regenerate both color variants after editing the source equations, run `powershell -ExecutionPolicy Bypass -File scripts/render_equations.ps1` from the project root. GitHub's `<picture>` support selects the matching SVG for the reader's light or dark color scheme.
 
 ## Numerical implementation
 
