@@ -40,8 +40,6 @@ The derivative term acts on measured die temperature, avoiding derivative kick w
 
 This is a system-level scaling model, not a pump curve or a measured facility power model.
 
-The equation artwork and system schematic are generated with LaTeX, TikZ, and `dvisvgm`. The schematic uses TikZ chains to place the main thermal path and create joins between adjacent nodes. Other links attach to named node anchors, so arrow endpoints follow the component boundaries when labels or dimensions change. Regeneration requires a LaTeX installation with TikZ and `dvisvgm` on `PATH`. The schematic source is `docs/system_schematic.tex`. To regenerate the equation and schematic SVGs, run `powershell -ExecutionPolicy Bypass -File scripts/render_equations.ps1` from the project root. GitHub's `<picture>` support selects the matching SVG for the reader's light or dark color scheme.
-
 ## Numerical implementation
 
 `thermal_dynamics!(du, u, p, t)` follows Julia's in-place ODE convention: it writes the derivatives into the caller-provided `du` vector and returns no newly allocated derivative array. This reduces repeated allocations during the many right-hand-side evaluations made by an adaptive integrator. The solver state is `[T_die, T_fluid, integral_error]`; the third state carries the PID integral through solver steps rather than mutating hidden controller memory. With concrete `Float64` parameters and telemetry vectors, the hot RHS path avoids constructing temporary heap objects. The full solve is not claimed to be allocation-free: solver bookkeeping, interpolation, and saved output allocate as needed.
